@@ -59,7 +59,7 @@ private fun ModuleModel.canNotContainExternalEntities(): Boolean {
 private fun ModuleModel.filterOutExternalDeclarations(): ModuleModel {
     return if (canNotContainExternalEntities()) {
         copy(
-                declarations = declarations.filterNot { (it is TypeAliasModel) || ((it is FunctionModel) && (it.inline)) },
+                declarations = declarations.filterNot { (it is TypeAliasModel) },
                 submodules = submodules.map { it.filterOutExternalDeclarations() }
         )
     } else {
@@ -80,7 +80,7 @@ fun SourceSetModel.extractNonExternalDeclarations(): SourceSetModel {
     }
 
     val sourcesLowered =
-            generateDeclarationFiles(aliasBucket) + generateDeclarationFiles(functionsBucket) + sources.map { source -> source.copy(root = source.root.filterOutExternalDeclarations()) }
+            generateDeclarationFiles(aliasBucket) + sources.map { source -> source.copy(root = source.root.filterOutExternalDeclarations()) }
 
     return copy(sources = sourcesLowered)
 }
